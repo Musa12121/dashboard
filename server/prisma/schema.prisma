@@ -1,0 +1,44 @@
+model Customer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  region    String
+  createdAt DateTime @default(now())
+
+  orders    Order[]
+}
+
+model Order {
+  id         Int      @id @default(autoincrement())
+  quantity   Int
+  total      Float
+  status     String
+  createdAt  DateTime @default(now())
+
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id])
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  category    String
+  price       Float
+  stock       Int
+  createdAt   DateTime @default(now())
+
+  orders      Order[]
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
